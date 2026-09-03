@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-bot:
+  test-filter:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,5 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run bot
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-        run: python bot.py
+      - name: Test filter
+        run: python test_filter.py
