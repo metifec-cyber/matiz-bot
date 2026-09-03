@@ -1,46 +1,16 @@
 import os
-import logging
+import requests
 
-from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+TOKEN = os.environ["BOT_TOKEN"]
 
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO
-)
+url = f"https://api.telegram.org/bot{TOKEN}/getMe"
 
-TOKEN = os.environ.get("BOT_TOKEN")
+response = requests.get(url, timeout=20)
 
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "سلام 👋\n"
-        "بات جست‌وجوی خودرو آماده‌ست 🚗\n\n"
-        "فعلاً نسخه آزمایشی هستیم.\n"
-        "به‌زودی فیلترهای قیمت، مدل، کارکرد و شهر رو اضافه می‌کنیم."
-    )
-
-
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "دستورات فعلی:\n"
-        "/start - شروع\n"
-        "/help - راهنما"
-    )
-
-
-def main():
-    if not TOKEN:
-        raise RuntimeError("BOT_TOKEN تنظیم نشده است.")
-
-    app = Application.builder().token(TOKEN).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("help", help_command))
-
-    print("Bot is running...")
-    app.run_polling()
-
-
-if __name__ == "__main__":
-    main()
+if response.ok:
+    bot = response.json()["result"]
+    print("Bot connected successfully:")
+    print(bot["username"])
+else:
+    print("Telegram connection failed")
+    print(response.text)
